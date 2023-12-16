@@ -1,0 +1,34 @@
+FROM golang:1.19.2-bullseye AS build
+
+WORKDIR /app
+
+# Copy go.mod and go.sum files
+COPY go.mod go.sum ./
+
+# Download dependencies
+RUN go mod download
+
+# Copy the rest of your application code
+COPY . .
+
+# Build the application
+RUN go build -ldflags='-w -s -extldflags "-static"' -tags musl -a -o /gateway
+
+# Stage 2: Final stage
+FROM golang:1.19.2-bullseye
+
+WORKDIR /app
+
+# Copy the binary from the build stage
+COPY --from=build /gateway /app/gateway
+
+# Create a directory for service-api
+RUN mkdir /app/service-api
+
+# Copy the service-api folder from the parent directory
+COPY ../service-api /app/service-api
+
+EXPOSE 8080
+
+CMD ["/app/gateway"]
+
