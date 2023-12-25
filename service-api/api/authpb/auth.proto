@@ -1,0 +1,79 @@
+syntax = "proto3";
+package authpb;
+option go_package = "gitlab.com/narm-group/service-api/api/authpb";
+
+import "google/protobuf/empty.proto";
+
+
+message Credentials{
+  string username = 1;
+  string password = 2;
+}
+
+message SignupReq{
+  string username = 1;
+  string password = 2;
+  string mobile_number = 3;
+  int64 role = 4;
+}
+
+message AuthRes{
+  int64 user_id = 1;
+  Token token = 2;
+  repeated string permissions = 3;
+  int64 role = 4;
+}
+
+message Token{
+  string value = 1;
+  int64 expiration_time = 2;
+}
+
+message ValidationReq{
+  string token = 1;
+}
+
+message ValidationRes{
+  int64 user_id = 1;
+  string username = 2;
+  int64 role = 3;
+  repeated string permissions = 4;
+}
+
+message RefreshTokenReq{
+  string token = 1;
+}
+
+message UserInfoReq{
+  int64 id = 1;
+}
+
+message UserInfoRes{
+  int64 id = 1;
+  string username = 2;
+  string mobile_number = 3;
+  string email = 4;
+  string city = 5;
+}
+
+message UserProfile{
+  string username = 1;
+  string email = 2;
+  string mobile_number = 3;
+  string city = 4;
+}
+
+message ChangePassReq{
+  string prev_password = 1;
+  string new_password = 2;
+}
+
+service UserService{
+  rpc Login(Credentials) returns (AuthRes);
+  rpc Signup(SignupReq) returns (AuthRes);
+  rpc ValidateToken(ValidationReq) returns (ValidationRes);
+  rpc RefreshToken(RefreshTokenReq) returns (Token);
+  rpc GetUserInfo(UserInfoReq) returns (UserInfoRes);
+  rpc EditUserProfile(UserProfile) returns (google.protobuf.Empty);
+  rpc ChangePassword(ChangePassReq) returns (google.protobuf.Empty);
+}

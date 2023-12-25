@@ -1,0 +1,49 @@
+syntax = "proto3";
+package reviewpb;
+option go_package = "gitlab.com/narm-group/service-api/api/reviewpb";
+
+import "google/protobuf/empty.proto";
+
+message Offer{
+    int64 id = 1;
+    int64 owner_id = 2;
+    string name = 3;
+    int64 price = 4;
+    bool price_deal = 5;
+    repeated string image_urls = 6;
+    string isbn = 7;
+    string publisher = 8;
+    int32 edition = 9;
+    string description = 10;
+}
+
+message OfferList{
+    repeated Offer offers = 1;
+}
+
+message OfferReview{
+    enum ReviewStatus{
+        UNKNOWN = 0;
+        APPROVED = 1;
+        REJECTED = 2;
+    }
+    
+    int64 offer_id = 1;
+    ReviewStatus status = 2;
+    string description = 3;
+}
+
+message PendingOffersReq{
+    int64 count = 1;
+}
+
+message UserOfferReq{
+    int64 status = 1;
+    int64 count = 2;
+}
+
+service ReviewService{
+    rpc GetPendingOffers(PendingOffersReq) returns (OfferList);
+    rpc SubmitReviewResult(OfferReview) returns (google.protobuf.Empty);
+    rpc GetUserOffers(UserOfferReq) returns (OfferList);
+}

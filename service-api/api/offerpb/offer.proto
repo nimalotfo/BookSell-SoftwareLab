@@ -1,0 +1,22 @@
+syntax = "proto3";
+package offerpb;
+option go_package = "gitlab.com/narm-group/service-api/api/offerpb";
+
+message SubmitOfferReq{
+    string name = 1;
+    int64 price = 2;
+    bool price_deal = 3;
+    repeated string image_urls = 4;
+    string isbn = 5;
+    string publisher = 6;
+    int32 edition = 7;
+    string description = 8;
+}
+
+message IdVersion{
+    int64 id = 1;
+}
+
+service OfferService{
+    rpc SubmitOffer(SubmitOfferReq) returns (IdVersion);
+}

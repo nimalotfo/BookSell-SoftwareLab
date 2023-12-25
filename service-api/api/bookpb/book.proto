@@ -1,0 +1,49 @@
+syntax = "proto3";
+package bookpb;
+option go_package = "gitlab.com/narm-group/service-api/api/bookpb";
+
+import "google/protobuf/timestamp.proto";
+
+message IdVersion{
+    int64 id = 1;
+}
+
+message Offer{
+    int64 id = 1;
+    string title = 2;
+    string book_title = 3;
+    string isbn = 4;
+    string publisher = 5;
+    int32 edition = 6;
+    int64 owner_id = 7;
+    int64 price = 8;
+    bool price_deal = 9;
+    string description = 10;
+    repeated string image_urls = 11;
+    google.protobuf.Timestamp created_at = 12;
+    google.protobuf.Timestamp updated_at = 13;
+}
+
+message OfferList{
+    repeated Offer offers = 1;
+}
+
+message FilterParams{
+    enum PRICE_DEAL_STATUS{
+        EMPTY = 0;
+        CHECKED = 1;
+        UNCHECKED = 2;
+    }
+    google.protobuf.Timestamp from_date = 1;
+    google.protobuf.Timestamp to_date = 2;
+    int64 from_price = 3;
+    int64 to_price = 4;
+    PRICE_DEAL_STATUS price_deal = 5;
+    int64 user_id = 6;
+    string name = 7;
+}
+
+service BookService{
+    rpc GetBookOffers(FilterParams) returns (OfferList);
+    rpc GetBookInfo(IdVersion) returns (Offer);
+}
